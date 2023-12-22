@@ -16,6 +16,22 @@ export class UserService {
     return createdUser.save();
   }
 
+  async getByEmail(email: string) {
+    const user = await this.userModal.findOne({ email });
+
+    if (!user) throw new NotFoundException();
+
+    return user;
+  }
+
+  async getById(id: string) {
+    const user = await this.userModal.findById(id);
+
+    if (!user) throw new NotFoundException();
+
+    return user;
+  }
+
   async getMe(userId: string) {
     const user = await this.userModal.findById(userId);
 

@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Logger, Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 
@@ -8,8 +8,17 @@ import { MongooseModule } from '@nestjs/mongoose';
       imports: [ConfigModule],
       useFactory: async (config: ConfigService) => {
         return {
-          uri: 'mongodb://localhost:27017',
-          dbName: '',
+          uri: config.get<string>('DB_URL'),
+          // useNewUrlParser: true,
+          // useUnifiedTopology: true,
+          connectionFactory: (connection) => {
+            Logger.debug(
+              `App connected to mongodb on ${config.get<string>('DB_URL')}`,
+              'MONGODB',
+            );
+
+            return connection;
+          },
         };
       },
       inject: [ConfigService],

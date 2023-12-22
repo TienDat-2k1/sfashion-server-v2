@@ -9,15 +9,19 @@ import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
 import { DatabaseModule } from './database/database.module';
-import { APP_GUARD } from '@nestjs/core';
+import { APP_FILTER, APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
 import { UserModule } from './user/user.module';
+import { HttpExceptionFilter } from './common/filters/http-exception.filter';
+import { MongoDriverErrorFilter } from './common/filters/mongoose-driver-error.filter';
+import { MongooseErrorFilter } from './common/filters/mongoose-error.filter';
+import configs from './common/config';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [appConfig, jwtConfig, databaseConfig, swaggerConfig],
+      load: configs,
     }),
     AuthModule,
     UserModule,
@@ -29,6 +33,18 @@ import { UserModule } from './user/user.module';
     {
       provide: APP_GUARD,
       useClass: JwtAuthGuard,
+    },
+    {
+      provide: APP_FILTER,
+      useClass: HttpExceptionFilter,
+    },
+    {
+      provide: APP_FILTER,
+      useClass: MongoDriverErrorFilter,
+    },
+    {
+      provide: APP_FILTER,
+      useClass: MongooseErrorFilter,
     },
   ],
 })
