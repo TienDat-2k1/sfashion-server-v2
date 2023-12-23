@@ -13,6 +13,12 @@ export class SignUpDto {
   @IsNotEmpty()
   readonly email: string;
 
+  @IsNotEmpty()
+  firstName: string;
+
+  @IsNotEmpty()
+  lastName: string;
+
   @MinLength(8, {
     message: 'password too short',
   })
